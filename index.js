@@ -56,7 +56,7 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // Cron job to update the twitter info every 15 minutes.
-cron.schedule('* * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
 	try{
 		console.log("Checking for new tweets...");
 		await getTweetInfo().then(function(result){
@@ -91,14 +91,15 @@ function sendTweetsMessage(){
 				try{
 					const tweetEmbed = new EmbedBuilder()
 					.setColor(0x9f1130)
-					.setTitle(`@Coach Fet ! New Tweet from ${tweeterName}`)
+					.setTitle(`New Tweet from ${tweeterName}`)
 					.setDescription(`${tweeterText}`)
 					.setThumbnail(tweeterImageURL)
 					.setAuthor({ name: tweeterName, url: `https://twitter.com/${tweeterUsername}` })
 					.setFooter({ text: `© Mankirat Sarwara 2023` })
 					.setURL(`https://twitter.com/${tweeterUsername}/status/${tweetID}`)
 					.setTimestamp();
-	
+
+					client.channels.cache.get(process.env.TWEETS_CHANNEL_ID).send('@everyone');
 					client.channels.cache.get(process.env.TWEETS_CHANNEL_ID).send({embeds: [tweetEmbed]});
 					resolve("New Tweet Sent!");
 				} catch(err){

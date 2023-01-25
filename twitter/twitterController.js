@@ -2,8 +2,7 @@ const {TwitterApi} = require("twitter-api-v2");
 const rwClient = require('./twitterClient.js');
 
 // Instantiating the variables needed for the twitter request.
-//const tweeterID = "1610392282926321665";
-const tweeterID = "861755566598873092";
+const tweeterID = "1610392282926321665";
 
 let getTweetInfo = async () => {
 	return new Promise(async (resolve, reject) => {
