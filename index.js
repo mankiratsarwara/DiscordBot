@@ -7,9 +7,15 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 const { getTweetInfo } = require('./twitter/twitterController.js');
 const cron = require('node-cron');
+const { EmbedBuilder } = require('discord.js');
+const { channel } = require('node:diagnostics_channel');
+const dotenv = require("dotenv")
+
+// Require the dotenv package
+dotenv.config();
 
 // Twitter Variables
-let tweeterUsername, tweeterName, tweeterImageURL, tweeterText, tweeterTimestamp = "";
+let tweeterUsername, tweeterName, tweeterImageURL, tweeterText, tweeterTimestamp, tweetID = undefined;
 
 // Create a new client instance.
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -50,15 +56,22 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // Cron job to update the twitter info every 15 minutes.
-cron.schedule('*/15 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
 	try{
+		console.log("Checking for new tweets...");
 		await getTweetInfo().then(function(result){
 			if(result['username']){
+				console.log("New tweet found!");
+				tweetID = result['tweetID'];
 				tweeterUsername = result['username'];
 				tweeterName = result['name'];
 				tweeterImageURL = result['imageURL'];
 				tweeterText = result['text'];
-				tweeterTimestamp = result['timestamp'];	
+				tweeterTimestamp = result['timestamp'];
+				sendTweetsMessage();
+			}
+			else{
+				console.log("No new tweets found!");
 			}
 		});
 	}
@@ -70,7 +83,29 @@ cron.schedule('*/15 * * * *', async () => {
 // Login to Discord with your client's token
 client.login(token);
 
-// Send the twitter info to the correct channel.
-if(tweeterUsername !== undefined || tweeterUsername !== ""){
+function sendTweetsMessage(){
+	if(tweeterUsername !== undefined || tweetID !== undefined || tweeterName !== undefined || tweeterImageURL !== undefined 
+		|| tweeterText !== undefined || tweeterTimestamp !== undefined){
+		let sendMessage = async () => {
+			return new Promise((resolve, reject) => {
+				try{
+					const tweetEmbed = new EmbedBuilder()
+					.setColor(0x9f1130)
+					.setTitle(`@Coach Fet ! New Tweet from ${tweeterName}`)
+					.setDescription(`${tweeterText}`)
+					.setThumbnail(tweeterImageURL)
+					.setAuthor({ name: tweeterName, url: `https://twitter.com/${tweeterUsername}` })
+					.setFooter({ text: `© Mankirat Sarwara 2023` })
+					.setURL(`https://twitter.com/${tweeterUsername}/status/${tweetID}`)
+					.setTimestamp();
 	
+					client.channels.cache.get(process.env.TWEETS_CHANNEL_ID).send({embeds: [tweetEmbed]});
+					resolve("New Tweet Sent!");
+				} catch(err){
+					reject(err);
+				}
+			});
+		}
+		sendMessage().then(function(result){console.log(result);}).catch(function(err){console.log(err);});
+	}
 }

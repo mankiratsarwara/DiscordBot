@@ -2,7 +2,8 @@ const {TwitterApi} = require("twitter-api-v2");
 const rwClient = require('./twitterClient.js');
 
 // Instantiating the variables needed for the twitter request.
-const tweeterID = "1610392282926321665";
+//const tweeterID = "1610392282926321665";
+const tweeterID = "861755566598873092";
 
 let getTweetInfo = async () => {
 	return new Promise(async (resolve, reject) => {
@@ -15,6 +16,7 @@ let getTweetInfo = async () => {
                 reject("Tweet is older than 15 minutes.");
             }
             else{
+                tweetInfo['id'] = recentTweetResponse[0].id;
                 tweetInfo['username'] = recentTweetResponse[0].user.screen_name;
                 tweetInfo['name'] = recentTweetResponse[0].user.name;
                 tweetInfo['imageURL'] = recentTweetResponse[0].user.profile_image_url;
