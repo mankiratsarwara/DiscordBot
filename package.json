@@ -19,6 +19,8 @@
   "homepage": "https://github.com/mankiratsarwara/DiscordBot#readme",
   "dependencies": {
     "discord.js": "^14.7.1",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "node-cron": "^3.0.2",
+    "twitter-api-v2": "^1.14.0"
   }
 }
