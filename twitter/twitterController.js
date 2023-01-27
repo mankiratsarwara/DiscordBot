@@ -15,6 +15,7 @@ let getTweetInfo = async () => {
                 reject("Tweet is older than 15 minutes.");
             }
             else{
+                tweetInfo['id'] = recentTweetResponse[0].id;
                 tweetInfo['username'] = recentTweetResponse[0].user.screen_name;
                 tweetInfo['name'] = recentTweetResponse[0].user.name;
                 tweetInfo['imageURL'] = recentTweetResponse[0].user.profile_image_url;
