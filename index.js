@@ -10,6 +10,7 @@ const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 const { channel } = require('node:diagnostics_channel');
 const dotenv = require("dotenv")
+const { sneakerRequest	} = require('./sneaker/footlockerClient.js');
 
 // Require the dotenv package
 dotenv.config();
