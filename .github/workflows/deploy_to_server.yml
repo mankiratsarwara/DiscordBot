@@ -1,0 +1,20 @@
+name: Publish Changes to Server.
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  FTP-Deploy-Action:
+    name: FTP Deployment | ${{ github.actor }} | ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v3
+      - name: Sync files to server
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: 52.91.247.117
+          server-dir: /home/ubuntu/DiscordBot/
+          username: ubuntu
+          password: ${{ secrets.SERVER_PASSWORD }}
